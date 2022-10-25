@@ -16,14 +16,13 @@
         android:theme="@style/Theme.StopWatch"
         tools:targetApi="31">
 
-        <service android:name=".service.StopWatchService"
+        <service android:name=".service.StopwatchService"
             android:enabled="true"
             android:exported="false"/>
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.StopWatch">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

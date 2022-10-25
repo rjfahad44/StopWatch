@@ -9,26 +9,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ft.ltd.service.ServiceHelper
-import com.ft.ltd.service.StopWatchService
-import com.ft.ltd.service.StopWatchState
+import com.ft.ltd.service.StopwatchService
+import com.ft.ltd.service.StopwatchState
+import com.ft.ltd.ui.theme.Blue
+import com.ft.ltd.ui.theme.Light
+import com.ft.ltd.ui.theme.Red
+import com.ft.ltd.ui.theme.White
 import com.ft.ltd.util.Constants.ACTION_SERVICE_CANCEL
 import com.ft.ltd.util.Constants.ACTION_SERVICE_START
 import com.ft.ltd.util.Constants.ACTION_SERVICE_STOP
 
 @ExperimentalAnimationApi
 @Composable
-fun MainScreen(stopWatchService: StopWatchService) {
+fun MainScreen(stopwatchService: StopwatchService) {
     val context = LocalContext.current
-    val hourS by stopWatchService.hourS
-    val minuteS by stopWatchService.minuteS
-    val secondS by stopWatchService.secondS
-    val currentState by stopWatchService.currentState
+    val hours by stopwatchService.hours
+    val minutes by stopwatchService.minutes
+    val seconds by stopwatchService.seconds
+    val currentState by stopwatchService.currentState
 
     Column(
         modifier = Modifier
@@ -43,93 +46,81 @@ fun MainScreen(stopWatchService: StopWatchService) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AnimatedContent(targetState = hourS, transitionSpec = { animation() }) {
+            AnimatedContent(targetState = hours, transitionSpec = { addAnimation() }) {
                 Text(
-                    text = hourS,
+                    text = hours,
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.h1.fontSize,
                         fontWeight = FontWeight.Bold,
-                        color = if (hourS == "00") Color.White else Color.Blue
+                        color = if (hours == "00") White else Blue
                     )
                 )
             }
-
-            AnimatedContent(targetState = minuteS, transitionSpec = { animation() }) {
+            AnimatedContent(targetState = minutes, transitionSpec = { addAnimation() }) {
                 Text(
-                    text = minuteS,
-                    style = TextStyle(
+                    text = minutes, style = TextStyle(
                         fontSize = MaterialTheme.typography.h1.fontSize,
                         fontWeight = FontWeight.Bold,
-                        color = if (minuteS == "00") Color.White else Color.Blue
+                        color = if (minutes == "00") White else Blue
                     )
                 )
             }
-
-            AnimatedContent(targetState = secondS, transitionSpec = { animation() }) {
+            AnimatedContent(targetState = seconds, transitionSpec = { addAnimation() }) {
                 Text(
-                    text = secondS,
-                    style = TextStyle(
+                    text = seconds, style = TextStyle(
                         fontSize = MaterialTheme.typography.h1.fontSize,
                         fontWeight = FontWeight.Bold,
-                        color = if (secondS == "00") Color.White else Color.Blue
+                        color = if (seconds == "00") White else Blue
                     )
                 )
             }
         }
-
         Row(modifier = Modifier.weight(weight = 1f)) {
             Button(
                 modifier = Modifier
-                    .weight(2f)
+                    .weight(1f)
                     .fillMaxHeight(0.8f),
                 onClick = {
                     ServiceHelper.triggerForegroundService(
                         context = context,
-                        action = if (currentState == StopWatchState.Started) ACTION_SERVICE_STOP else ACTION_SERVICE_START
+                        action = if (currentState == StopwatchState.Started) ACTION_SERVICE_STOP
+                        else ACTION_SERVICE_START
                     )
-                },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (currentState == StopWatchState.Started) Color.Red else Color.Blue,
-                    contentColor = Color.White
+                }, colors = ButtonDefaults.buttonColors(
+                    backgroundColor = if (currentState == StopwatchState.Started) Red else Blue,
+                    contentColor = White
                 )
             ) {
                 Text(
-                    text = when (currentState) {
-                        StopWatchState.Started -> "Stop"
-                        StopWatchState.Stopped -> "Resume"
-                        else -> "Start"
-                    }
+                    text = if (currentState == StopwatchState.Started) "Stop"
+                    else if ((currentState == StopwatchState.Stopped)) "Resume"
+                    else "Start"
                 )
             }
-
             Spacer(modifier = Modifier.width(30.dp))
-
             Button(
                 modifier = Modifier
-                    .weight(2f)
+                    .weight(1f)
                     .fillMaxHeight(0.8f),
                 onClick = {
                     ServiceHelper.triggerForegroundService(
-                        context = context,
-                        action = ACTION_SERVICE_CANCEL
+                        context = context, action = ACTION_SERVICE_CANCEL
                     )
                 },
-                enabled = secondS != "00" && currentState != StopWatchState.Started,
-                colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.LightGray)
-            )
-            {
-                Text(
-                    text = "Cancel"
-                )
+                enabled = seconds != "00" && currentState != StopwatchState.Started,
+                colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Light)
+            ) {
+                Text(text = "Cancel")
             }
         }
     }
 }
 
 @ExperimentalAnimationApi
-fun animation(duration: Int = 500): ContentTransform {
-    return slideInVertically(animationSpec = tween(durationMillis = duration)) { height -> height } +
-            fadeIn(animationSpec = tween(durationMillis = duration)) with
-            slideOutVertically(animationSpec = tween(durationMillis = duration)) { height -> height } +
-            fadeOut(animationSpec = tween(durationMillis = duration))
+fun addAnimation(duration: Int = 600): ContentTransform {
+    return slideInVertically(animationSpec = tween(durationMillis = duration)) { height -> height } + fadeIn(
+        animationSpec = tween(durationMillis = duration)
+    ) with slideOutVertically(animationSpec = tween(durationMillis = duration)) { height -> height } + fadeOut(
+        animationSpec = tween(durationMillis = duration)
+    )
 }

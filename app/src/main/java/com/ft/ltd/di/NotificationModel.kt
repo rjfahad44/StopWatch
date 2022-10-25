@@ -17,25 +17,29 @@ import dagger.hilt.android.scopes.ServiceScoped
 @ExperimentalAnimationApi
 @Module
 @InstallIn(ServiceComponent::class)
-object NotificationModel {
+object NotificationModule {
 
     @ServiceScoped
     @Provides
-    fun provideNotificationBuilder(@ApplicationContext context: Context): NotificationCompat.Builder {
+    fun provideNotificationBuilder(
+        @ApplicationContext context: Context
+    ): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("StopWatch")
+            .setContentTitle("Stopwatch")
             .setContentText("00:00:00")
             .setSmallIcon(R.drawable.ic_baseline_timer_24)
-//            .setAutoCancel(false)
             .setOngoing(true)
-            .addAction(R.drawable.ic_baseline_pause_24, "Stop", ServiceHelper.stopPendingIntent(context))
-            .addAction(R.drawable.ic_baseline_close_24, "Cancel", ServiceHelper.cancelPendingIntent(context))
+            .addAction(0, "Stop", ServiceHelper.stopPendingIntent(context))
+            .addAction(0, "Cancel", ServiceHelper.cancelPendingIntent(context))
             .setContentIntent(ServiceHelper.clickPendingIntent(context))
     }
 
     @ServiceScoped
     @Provides
-    fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager {
+    fun provideNotificationManager(
+        @ApplicationContext context: Context
+    ): NotificationManager {
         return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
+
 }
