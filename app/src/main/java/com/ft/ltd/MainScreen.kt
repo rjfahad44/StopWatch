@@ -4,11 +4,14 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -16,10 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.ft.ltd.service.ServiceHelper
 import com.ft.ltd.service.StopwatchService
 import com.ft.ltd.service.StopwatchState
-import com.ft.ltd.ui.theme.Blue
-import com.ft.ltd.ui.theme.Light
-import com.ft.ltd.ui.theme.Red
-import com.ft.ltd.ui.theme.White
+import com.ft.ltd.ui.theme.*
 import com.ft.ltd.util.Constants.ACTION_SERVICE_CANCEL
 import com.ft.ltd.util.Constants.ACTION_SERVICE_START
 import com.ft.ltd.util.Constants.ACTION_SERVICE_STOP
@@ -36,7 +36,7 @@ fun MainScreen(stopwatchService: StopwatchService) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.surface)
+            .background(Color.White)
             .padding(30.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -52,7 +52,7 @@ fun MainScreen(stopwatchService: StopwatchService) {
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.h1.fontSize,
                         fontWeight = FontWeight.Bold,
-                        color = if (hours == "00") White else Blue
+                        color = if (hours == "00") Black else Green
                     )
                 )
             }
@@ -61,7 +61,7 @@ fun MainScreen(stopwatchService: StopwatchService) {
                     text = minutes, style = TextStyle(
                         fontSize = MaterialTheme.typography.h1.fontSize,
                         fontWeight = FontWeight.Bold,
-                        color = if (minutes == "00") White else Blue
+                        color = if (minutes == "00") Black else Green
                     )
                 )
             }
@@ -70,7 +70,7 @@ fun MainScreen(stopwatchService: StopwatchService) {
                     text = seconds, style = TextStyle(
                         fontSize = MaterialTheme.typography.h1.fontSize,
                         fontWeight = FontWeight.Bold,
-                        color = if (seconds == "00") White else Blue
+                        color = if (seconds == "00") Black else Green
                     )
                 )
             }
@@ -80,6 +80,7 @@ fun MainScreen(stopwatchService: StopwatchService) {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(0.8f),
+                shape = RoundedCornerShape(50.dp),
                 onClick = {
                     ServiceHelper.triggerForegroundService(
                         context = context,
@@ -87,7 +88,7 @@ fun MainScreen(stopwatchService: StopwatchService) {
                         else ACTION_SERVICE_START
                     )
                 }, colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (currentState == StopwatchState.Started) Red else Blue,
+                    backgroundColor = if (currentState == StopwatchState.Started) Red else LightGreen,
                     contentColor = White
                 )
             ) {
@@ -102,13 +103,18 @@ fun MainScreen(stopwatchService: StopwatchService) {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(0.8f),
+                shape = RoundedCornerShape(50.dp),
                 onClick = {
                     ServiceHelper.triggerForegroundService(
                         context = context, action = ACTION_SERVICE_CANCEL
                     )
                 },
                 enabled = seconds != "00" && currentState != StopwatchState.Started,
-                colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Light)
+                colors = ButtonDefaults.buttonColors(
+                    disabledBackgroundColor = LightRed,
+                    backgroundColor = if (currentState == StopwatchState.Started) LightRed else Red,
+                    contentColor = if (currentState == StopwatchState.Started) Ash else White
+                )
             ) {
                 Text(text = "Cancel")
             }
